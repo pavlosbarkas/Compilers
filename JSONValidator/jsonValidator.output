@@ -1,0 +1,466 @@
+Grammar
+
+    0 $accept: json $end
+
+    1 $@1: %empty
+
+    2 json: $@1 pair_declarations object
+
+    3 pair_declarations: %empty
+    4                  | pair_declarations '(' T_string value ')'
+
+    5 object: '{' members '}'
+
+    6 members: pair
+    7        | pair ',' members
+    8        | error ',' members
+
+    9 pair: T_string ':' value
+
+   10 array: '[' ']'
+   11      | '[' elements ']'
+
+   12 elements: value
+   13         | value ',' elements
+
+   14 value: T_string
+   15      | T_number_int
+   16      | T_number_float
+   17      | "constant"
+   18      | "array" T_number_int
+   19      | "object"
+   20      | T_true
+   21      | T_false
+   22      | T_null
+   23      | object
+   24      | array
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    '(' (40) 4
+    ')' (41) 4
+    ',' (44) 7 8 13
+    ':' (58) 9
+    '[' (91) 10 11
+    ']' (93) 10 11
+    '{' (123) 5
+    '}' (125) 5
+    error (256) 8
+    T_number_int <num> (258) 15 18
+    T_number_float <numf> (259) 16
+    T_string <str> (260) 4 9 14
+    "array" <entity> (261) 18
+    "object" <entity> (262) 19
+    "constant" <entity> (263) 17
+    T_true <entity> (264) 20
+    T_false <entity> (265) 21
+    T_null <entity> (266) 22
+
+
+Nonterminals, with rules where they appear
+
+    $accept (20)
+        on left: 0
+    json (21)
+        on left: 2
+        on right: 0
+    $@1 (22)
+        on left: 1
+        on right: 2
+    pair_declarations (23)
+        on left: 3 4
+        on right: 2 4
+    object <entity> (24)
+        on left: 5
+        on right: 2 23
+    members <entity> (25)
+        on left: 6 7 8
+        on right: 5 7 8
+    pair <entity> (26)
+        on left: 9
+        on right: 6 7
+    array <entity> (27)
+        on left: 10 11
+        on right: 24
+    elements <entity> (28)
+        on left: 12 13
+        on right: 11 13
+    value <entity> (29)
+        on left: 14 15 16 17 18 19 20 21 22 23 24
+        on right: 4 9 12 13
+
+
+State 0
+
+    0 $accept: . json $end
+
+    $default  reduce using rule 1 ($@1)
+
+    json  go to state 1
+    $@1   go to state 2
+
+
+State 1
+
+    0 $accept: json . $end
+
+    $end  shift, and go to state 3
+
+
+State 2
+
+    2 json: $@1 . pair_declarations object
+
+    $default  reduce using rule 3 (pair_declarations)
+
+    pair_declarations  go to state 4
+
+
+State 3
+
+    0 $accept: json $end .
+
+    $default  accept
+
+
+State 4
+
+    2 json: $@1 pair_declarations . object
+    4 pair_declarations: pair_declarations . '(' T_string value ')'
+
+    '('  shift, and go to state 5
+    '{'  shift, and go to state 6
+
+    object  go to state 7
+
+
+State 5
+
+    4 pair_declarations: pair_declarations '(' . T_string value ')'
+
+    T_string  shift, and go to state 8
+
+
+State 6
+
+    5 object: '{' . members '}'
+
+    error     shift, and go to state 9
+    T_string  shift, and go to state 10
+
+    members  go to state 11
+    pair     go to state 12
+
+
+State 7
+
+    2 json: $@1 pair_declarations object .
+
+    $default  reduce using rule 2 (json)
+
+
+State 8
+
+    4 pair_declarations: pair_declarations '(' T_string . value ')'
+
+    T_number_int    shift, and go to state 13
+    T_number_float  shift, and go to state 14
+    T_string        shift, and go to state 15
+    "array"         shift, and go to state 16
+    "object"        shift, and go to state 17
+    "constant"      shift, and go to state 18
+    T_true          shift, and go to state 19
+    T_false         shift, and go to state 20
+    T_null          shift, and go to state 21
+    '{'             shift, and go to state 6
+    '['             shift, and go to state 22
+
+    object  go to state 23
+    array   go to state 24
+    value   go to state 25
+
+
+State 9
+
+    8 members: error . ',' members
+
+    ','  shift, and go to state 26
+
+
+State 10
+
+    9 pair: T_string . ':' value
+
+    ':'  shift, and go to state 27
+
+
+State 11
+
+    5 object: '{' members . '}'
+
+    '}'  shift, and go to state 28
+
+
+State 12
+
+    6 members: pair .
+    7        | pair . ',' members
+
+    ','  shift, and go to state 29
+
+    $default  reduce using rule 6 (members)
+
+
+State 13
+
+   15 value: T_number_int .
+
+    $default  reduce using rule 15 (value)
+
+
+State 14
+
+   16 value: T_number_float .
+
+    $default  reduce using rule 16 (value)
+
+
+State 15
+
+   14 value: T_string .
+
+    $default  reduce using rule 14 (value)
+
+
+State 16
+
+   18 value: "array" . T_number_int
+
+    T_number_int  shift, and go to state 30
+
+
+State 17
+
+   19 value: "object" .
+
+    $default  reduce using rule 19 (value)
+
+
+State 18
+
+   17 value: "constant" .
+
+    $default  reduce using rule 17 (value)
+
+
+State 19
+
+   20 value: T_true .
+
+    $default  reduce using rule 20 (value)
+
+
+State 20
+
+   21 value: T_false .
+
+    $default  reduce using rule 21 (value)
+
+
+State 21
+
+   22 value: T_null .
+
+    $default  reduce using rule 22 (value)
+
+
+State 22
+
+   10 array: '[' . ']'
+   11      | '[' . elements ']'
+
+    T_number_int    shift, and go to state 13
+    T_number_float  shift, and go to state 14
+    T_string        shift, and go to state 15
+    "array"         shift, and go to state 16
+    "object"        shift, and go to state 17
+    "constant"      shift, and go to state 18
+    T_true          shift, and go to state 19
+    T_false         shift, and go to state 20
+    T_null          shift, and go to state 21
+    '{'             shift, and go to state 6
+    '['             shift, and go to state 22
+    ']'             shift, and go to state 31
+
+    object    go to state 23
+    array     go to state 24
+    elements  go to state 32
+    value     go to state 33
+
+
+State 23
+
+   23 value: object .
+
+    $default  reduce using rule 23 (value)
+
+
+State 24
+
+   24 value: array .
+
+    $default  reduce using rule 24 (value)
+
+
+State 25
+
+    4 pair_declarations: pair_declarations '(' T_string value . ')'
+
+    ')'  shift, and go to state 34
+
+
+State 26
+
+    8 members: error ',' . members
+
+    error     shift, and go to state 9
+    T_string  shift, and go to state 10
+
+    members  go to state 35
+    pair     go to state 12
+
+
+State 27
+
+    9 pair: T_string ':' . value
+
+    T_number_int    shift, and go to state 13
+    T_number_float  shift, and go to state 14
+    T_string        shift, and go to state 15
+    "array"         shift, and go to state 16
+    "object"        shift, and go to state 17
+    "constant"      shift, and go to state 18
+    T_true          shift, and go to state 19
+    T_false         shift, and go to state 20
+    T_null          shift, and go to state 21
+    '{'             shift, and go to state 6
+    '['             shift, and go to state 22
+
+    object  go to state 23
+    array   go to state 24
+    value   go to state 36
+
+
+State 28
+
+    5 object: '{' members '}' .
+
+    $default  reduce using rule 5 (object)
+
+
+State 29
+
+    7 members: pair ',' . members
+
+    error     shift, and go to state 9
+    T_string  shift, and go to state 10
+
+    members  go to state 37
+    pair     go to state 12
+
+
+State 30
+
+   18 value: "array" T_number_int .
+
+    $default  reduce using rule 18 (value)
+
+
+State 31
+
+   10 array: '[' ']' .
+
+    $default  reduce using rule 10 (array)
+
+
+State 32
+
+   11 array: '[' elements . ']'
+
+    ']'  shift, and go to state 38
+
+
+State 33
+
+   12 elements: value .
+   13         | value . ',' elements
+
+    ','  shift, and go to state 39
+
+    $default  reduce using rule 12 (elements)
+
+
+State 34
+
+    4 pair_declarations: pair_declarations '(' T_string value ')' .
+
+    $default  reduce using rule 4 (pair_declarations)
+
+
+State 35
+
+    8 members: error ',' members .
+
+    $default  reduce using rule 8 (members)
+
+
+State 36
+
+    9 pair: T_string ':' value .
+
+    $default  reduce using rule 9 (pair)
+
+
+State 37
+
+    7 members: pair ',' members .
+
+    $default  reduce using rule 7 (members)
+
+
+State 38
+
+   11 array: '[' elements ']' .
+
+    $default  reduce using rule 11 (array)
+
+
+State 39
+
+   13 elements: value ',' . elements
+
+    T_number_int    shift, and go to state 13
+    T_number_float  shift, and go to state 14
+    T_string        shift, and go to state 15
+    "array"         shift, and go to state 16
+    "object"        shift, and go to state 17
+    "constant"      shift, and go to state 18
+    T_true          shift, and go to state 19
+    T_false         shift, and go to state 20
+    T_null          shift, and go to state 21
+    '{'             shift, and go to state 6
+    '['             shift, and go to state 22
+
+    object    go to state 23
+    array     go to state 24
+    elements  go to state 40
+    value     go to state 33
+
+
+State 40
+
+   13 elements: value ',' elements .
+
+    $default  reduce using rule 13 (elements)
